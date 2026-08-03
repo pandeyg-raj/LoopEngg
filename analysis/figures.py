@@ -247,6 +247,58 @@ def fig4_breakeven_phase(res):
     print("fig4_breakeven_phase")
 
 
+# ---------------------------------------------------------------- Fig 5
+def fig5_cost_drivers():
+    """Two panels: the axis that explains cost, and the one that does not.
+
+    Same y-axis and the same points in both, so the contrast is the message
+    rather than an artefact of scaling.
+    """
+    p = Path("data/turncount.json")
+    if not p.exists():
+        print("fig5 skipped -- run analysis/turncount.py first")
+        return
+    d = json.loads(p.read_text())
+    pts = d["points"]
+    turns = np.array(pts["turns"], float)
+    obs = np.array(pts["mean_obs"], float)
+    cost = np.array(pts["cost"], float)
+    cell = np.array(pts["cell"], int)
+    labels = d["cells"]
+
+    fig, axes = plt.subplots(1, 2, figsize=(7.0, 2.8), sharey=True)
+
+    for ax, x, xlabel, expo, r2v in (
+        (axes[0], turns, "Turns per trajectory", d["exponent_turns"], d["r2_turns"]),
+        (axes[1], obs, "Mean observation size (tokens)", d["exponent_obs"], d["r2_obs"]),
+    ):
+        for i, lab in enumerate(labels):
+            m = cell == i
+            s = SERIES[i % 4]
+            ax.scatter(x[m], cost[m], s=7, alpha=0.55, color=s["color"],
+                       marker=s["marker"], linewidths=0, label=lab, zorder=3)
+        # Fitted power law, drawn over the full x-range.
+        lx = np.log(x)
+        b, a = np.polyfit(lx, np.log(cost), 1)
+        xs = np.linspace(x.min(), x.max(), 100)
+        ax.plot(xs, np.exp(a) * xs ** b, color=INK, lw=1.6, ls="--", zorder=4)
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        ax.set_xlabel(xlabel)
+        ax.annotate(f"exponent {expo:+.2f}\n$R^2$ = {r2v:.3f}",
+                    xy=(0.04, 0.93), xycoords="axes fraction", va="top",
+                    fontsize=7.5, color=INK, fontweight="bold")
+        tidy(ax, grid_axis="both")
+
+    axes[0].set_ylabel("Cost per trajectory (norm. \\$)")
+    axes[0].legend(loc="lower right", markerscale=1.8, handletextpad=0.3)
+    fig.tight_layout()
+    fig.savefig(OUT / "fig5_cost_drivers.pdf", bbox_inches="tight")
+    fig.savefig(OUT / "fig5_cost_drivers.png", bbox_inches="tight")
+    plt.close(fig)
+    print("fig5_cost_drivers")
+
+
 if __name__ == "__main__":
     res = load()
     print(f"{len(res['cells'])} cells loaded")
@@ -254,4 +306,5 @@ if __name__ == "__main__":
     fig2_observation_cdf(res)
     fig3_saving_vs_threshold(res)
     fig4_breakeven_phase(res)
+    fig5_cost_drivers()
     print(f"\nwrote PDFs + PNGs to {OUT.resolve()}")

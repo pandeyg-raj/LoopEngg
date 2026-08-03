@@ -126,6 +126,14 @@ def main() -> None:
         "r2_joint": r2_joint,
         "beta": list(beta),
         "cv_cost_per_turn": float(np.std(cpt) / np.mean(cpt)),
+        "cells": list(CELLS.keys()),
+        # Per-trajectory points, for the scatter figure.
+        "points": {
+            "turns": turns.tolist(),
+            "mean_obs": mean_obs.tolist(),
+            "cost": cost.tolist(),
+            "cell": cell_id,
+        },
     }, indent=1))
     print("\nwrote data/turncount.json")
 
