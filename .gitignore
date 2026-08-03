@@ -1,0 +1,28 @@
+# Downloaded corpora -- large, and reproducible from the shard IDs in the README.
+data/
+!data/.gitkeep
+
+# Third-party papers downloaded for the literature review. Copyrighted;
+# must not be redistributed in the artifact.
+papers/
+
+# Generated outputs -- regenerate with `python analysis/figures.py`.
+figures/
+*.png
+*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Anything holding local identity for the anonymity scanner -- never commit.
+anon_needles.txt
