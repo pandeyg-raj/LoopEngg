@@ -9,10 +9,8 @@ data/
 # must not be redistributed in the artifact.
 papers/
 
-# Generated outputs -- regenerate with `python analysis/figures.py`.
-figures/
-*.png
-*.pdf
+# Generated outputs are tracked so a clone reproduces the paper's figures
+# without re-running anything; regenerate with `python analysis/figures.py`.
 
 # Python
 __pycache__/
