@@ -1,6 +1,9 @@
 # Downloaded corpora -- large, and reproducible from the shard IDs in the README.
 data/
 !data/.gitkeep
+# ...but keep the small derived result files: the analyses and figures
+# regenerate from these without re-downloading the corpus.
+!data/*.json
 
 # Third-party papers downloaded for the literature review. Copyrighted;
 # must not be redistributed in the artifact.

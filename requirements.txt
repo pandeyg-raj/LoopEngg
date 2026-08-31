@@ -1,0 +1,9 @@
+# Python 3.10+
+# tiktoken is optional: without it the tokenizer falls back to a characters/4
+# heuristic, which changes absolute token counts but not the reported ratios.
+huggingface_hub
+pyarrow
+tiktoken
+pandas
+numpy
+matplotlib

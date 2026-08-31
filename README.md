@@ -1,6 +1,8 @@
-# Why Context Reduction in Coding Agents Saturates — Artifact
+# TurnCost — Artifact
 
-Replication package for the paper. Every number, table and figure regenerates from
+Replication package for "TurnCost: Turns, Not Observations: Cache-Aware Loop
+Engineering for Coding Agents", POVC '26 (1st International Workshop on PromptOps
+and Vibe Coding, co-located with ASE 2026), doi:10.1145/3843779.3844635. Every number, table and figure regenerates from
 public data. **No API keys, no paid inference, no GPU.** A full run takes a few minutes
 plus one ~600 MB download.
 
@@ -32,6 +34,7 @@ python analysis/expansion.py        # sensitivity + turn types -> data/expansion
 python analysis/make_tables.py      # LaTeX tables -> figures/tables.tex
 python analysis/figures.py          # Figures 1-4 -> figures/*.pdf
 python analysis/diagnose.py         # per-cell characterisation detail
+python analysis/aci_recovery.py     # Sec 5.9 truncation recovery -> data/aci_recovery.json
 ```
 
 `run_all.py` downloads four parquet shards on first use and caches them under

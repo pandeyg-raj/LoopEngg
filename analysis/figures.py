@@ -41,6 +41,11 @@ INK = "#0b0b0b"
 INK2 = "#52514e"
 
 plt.rcParams.update({
+    # Embed TrueType (type 42) rather than matplotlib's default Type 3 fonts.
+    # ACM/IEEE camera-ready checkers reject Type 3: it is not scalable and does
+    # not extract or search reliably.
+    "pdf.fonttype": 42,
+    "ps.fonttype": 42,
     "figure.facecolor": SURFACE,
     "axes.facecolor": SURFACE,
     "savefig.facecolor": SURFACE,
@@ -158,9 +163,13 @@ def fig3_saving_vs_threshold(res):
     """Small multiples: 3 designs per cell. B3 dominates; delegation goes negative."""
     cells = res["cells"]
     n = len(cells)
-    ncol = 2
-    nrow = int(np.ceil(n / ncol))
-    fig, axes = plt.subplots(nrow, ncol, figsize=(7.0, 2.5 * nrow), sharey=True)
+    # One row of small multiples. A 2x2 grid renders 5in tall across both columns,
+    # which is over half a page in the camera-ready; the strip carries the same
+    # comparison in 2.3in because the y-axis is shared and only the B3/R1 overlap
+    # has to stay legible.
+    ncol = n
+    nrow = 1
+    fig, axes = plt.subplots(nrow, ncol, figsize=(7.0, 2.3), sharey=True)
     axes = np.atleast_1d(axes).ravel()
 
     # B3 is drawn thick underneath and R1 thin on top: the two coincide almost
@@ -182,15 +191,19 @@ def fig3_saving_vs_threshold(res):
         ax.axhline(0, color=INK, lw=0.9, zorder=2)
         ax.set_xscale("log")
         ax.set_title(c["label"], color=INK, pad=4)
-        ax.set_xlabel("Delegation threshold (min observation tokens)")
-        if k % ncol == 0:
-            ax.set_ylabel("Cost saving vs. baseline (%)")
+        ax.set_xlabel("Threshold (tokens)")
+        if k == 0:
+            ax.set_ylabel("Cost saving vs.\nbaseline (%)")
         tidy(ax, grid_axis="both")
 
     for j in range(n, len(axes)):
         axes[j].set_visible(False)
 
-    axes[0].legend(loc="upper right")
+    # One shared legend below the strip: in a 1xN layout an in-axes legend sits on
+    # top of the very B3/R1 overlap the figure exists to show.
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=3, frameon=False,
+               bbox_to_anchor=(0.5, -0.06))
     fig.tight_layout()
     fig.savefig(OUT / "fig3_saving_vs_threshold.pdf", bbox_inches="tight")
     fig.savefig(OUT / "fig3_saving_vs_threshold.png", bbox_inches="tight")
@@ -266,11 +279,14 @@ def fig5_cost_drivers():
     cell = np.array(pts["cell"], int)
     labels = d["cells"]
 
-    fig, axes = plt.subplots(1, 2, figsize=(7.0, 2.8), sharey=True)
+    # Drawn at \columnwidth rather than \textwidth for the camera-ready. Generated at
+    # final size so the type stays at its true point size -- scaling a 7in figure down
+    # in LaTeX would render these labels at about 3.5pt.
+    fig, axes = plt.subplots(1, 2, figsize=(3.4, 2.4), sharey=True)
 
     for ax, x, xlabel, expo, r2v in (
-        (axes[0], turns, "Turns per trajectory", d["exponent_turns"], d["r2_turns"]),
-        (axes[1], obs, "Mean observation size (tokens)", d["exponent_obs"], d["r2_obs"]),
+        (axes[0], turns, "Turns", d["exponent_turns"], d["r2_turns"]),
+        (axes[1], obs, "Mean obs. (tokens)", d["exponent_obs"], d["r2_obs"]),
     ):
         for i, lab in enumerate(labels):
             m = cell == i
@@ -290,8 +306,12 @@ def fig5_cost_drivers():
                     fontsize=7.5, color=INK, fontweight="bold")
         tidy(ax, grid_axis="both")
 
-    axes[0].set_ylabel("Cost per trajectory (norm. \\$)")
-    axes[0].legend(loc="lower right", markerscale=1.8, handletextpad=0.3)
+    axes[0].set_ylabel("Cost / trajectory (norm. \\$)")
+    # At column width a four-entry legend swamps a 1.5in panel, so it goes below.
+    handles, labels_ = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels_, loc="lower center", ncol=2, frameon=False,
+               markerscale=1.8, handletextpad=0.3, columnspacing=1.0,
+               bbox_to_anchor=(0.5, -0.16))
     fig.tight_layout()
     fig.savefig(OUT / "fig5_cost_drivers.pdf", bbox_inches="tight")
     fig.savefig(OUT / "fig5_cost_drivers.png", bbox_inches="tight")

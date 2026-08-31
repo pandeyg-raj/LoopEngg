@@ -1,0 +1,54 @@
+{
+ "per_cell": {
+  "qwen35 / OpenHands": {
+   "observations": 15107,
+   "truncated": 111,
+   "rate_pct": 0.73,
+   "trajectories_touched": 85
+  },
+  "minimax / SWE-agent": {
+   "observations": 10886,
+   "truncated": 118,
+   "rate_pct": 1.08,
+   "trajectories_touched": 86
+  },
+  "minimax / OpenHands": {
+   "observations": 9590,
+   "truncated": 161,
+   "rate_pct": 1.68,
+   "trajectories_touched": 101
+  },
+  "qwen35 / SWE-agent": {
+   "observations": 20581,
+   "truncated": 128,
+   "rate_pct": 0.62,
+   "trajectories_touched": 95
+  }
+ },
+ "kinds": {
+  "guided": 468,
+  "bare": 50
+ },
+ "summary": {
+  "guided": {
+   "n": 468,
+   "narrowed_pct": 76.9,
+   "breakdown": {
+    "other_action": 107,
+    "narrowed_retry_same_tool": 78,
+    "narrowed_other_tool": 282,
+    "terminate": 1
+   }
+  },
+  "bare": {
+   "n": 50,
+   "narrowed_pct": 44.0,
+   "breakdown": {
+    "narrowed_retry_same_tool": 17,
+    "other_action": 28,
+    "narrowed_other_tool": 5
+   }
+  }
+ },
+ "observations_total": 56164
+}
